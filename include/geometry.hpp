@@ -91,7 +91,7 @@ struct Line {
         return {std::min(start.x, end.x), std::min(start.y, end.y), std::max(start.x, end.x), std::max(start.y, end.y)};
     }
     [[nodiscard]] constexpr double Height() const noexcept { return std::max(start.y, end.y); }
-    [[nodiscard]] constexpr Point2D Center() noexcept { return (start + end) / 2.0; }
+    [[nodiscard]] constexpr Point2D Center() const noexcept { return (start + end) / 2.0; }
 
     [[nodiscard]] constexpr std::array<Point2D, 2> Vertices() const noexcept {
         return {Point2D{start.x, start.y}, {end.x, end.y}};
@@ -136,7 +136,7 @@ struct Rectangle {
                 {bottom_left.x, bottom_left.y + height}};
     }
     [[nodiscard]] constexpr double Height() const noexcept { return bottom_left.y + height; }
-    [[nodiscard]] constexpr Point2D Center() noexcept { return bottom_left + (Point2D{width, height} / 2.0); }
+    [[nodiscard]] constexpr Point2D Center() const noexcept { return bottom_left + (Point2D{width, height} / 2.0); }
 
     [[nodiscard]] constexpr Lines2D<5> Lines() const noexcept {
         return {{bottom_left.x, bottom_left.x, bottom_left.x + width, bottom_left.x + width, bottom_left.x},
@@ -169,7 +169,7 @@ struct RegularPolygon {
     [[nodiscard]] constexpr double Height() const noexcept { return center_p.y + radius; }
     [[nodiscard]] constexpr Point2D Center() const noexcept { return center_p; }
 
-    [[nodiscard]] constexpr Lines2DDyn Lines() {
+    [[nodiscard]] constexpr Lines2DDyn Lines() const {
         auto verts = Vertices();
         Lines2DDyn lines;
         lines.Reserve(verts.size() + 1);
