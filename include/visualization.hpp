@@ -4,8 +4,8 @@
 
 namespace geometry::visualization {
 
-void Draw(std::span<geometry::Shape> shapes);
+void Draw(std::span<geometry::Shape> shapes, std::string_view filename);
 
-void Draw(std::span<const geometry::triangulation::DelaunayTriangle> triangles);
+void Draw(std::span<const geometry::triangulation::DelaunayTriangle> triangles, std::string_view filename);
 
 }  // namespace geometry::visualization
