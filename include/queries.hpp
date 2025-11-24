@@ -6,11 +6,6 @@
 
 namespace geometry::queries {
 
-template <class... Ts>
-struct Multilambda : Ts... {
-    using Ts::operator()...;
-};
-
 struct DistanceVisitor {
     Point2D point;
 
@@ -242,29 +237,13 @@ struct ShapeToShapeDistanceVisitor {
     return std::visit(PointToShapeDistanceVisitor{point}, shape);
 }
 
-// clang-format off
 [[nodiscard]] inline constexpr BoundingBox GetBoundBox(const Shape &shape) {
-    return std::visit(Multilambda{
-        [](const Line&          l) { return l.BoundBox(); },
-        [](const Triangle&      t) { return t.BoundBox(); },
-        [](const Rectangle&     r) { return r.BoundBox(); },
-        [](const RegularPolygon&p) { return p.BoundBox(); },
-        [](const Circle&        c) { return c.BoundBox(); },
-        [](const Polygon&       p) { return p.BoundBox(); }
-    }, shape);
+    return std::visit([](const auto &s) -> BoundingBox { return s.BoundBox(); }, shape);
 }
 
 [[nodiscard]] inline constexpr double GetHeight(const Shape &shape) {
-    return std::visit(Multilambda{
-        [](const Line&          l) { return l.Height(); },
-        [](const Triangle&      t) { return t.Height(); },
-        [](const Rectangle&     r) { return r.Height(); },
-        [](const RegularPolygon&p) { return p.Height(); },
-        [](const Circle&        c) { return c.Height(); },
-        [](const Polygon&       p) { return p.Height(); }
-    }, shape);
+    return std::visit([](const auto &s) -> double { return s.Height(); }, shape);
 }
-// clang-format on
 
 [[nodiscard]] inline constexpr bool BoundingBoxesOverlap(const Shape &shape1, const Shape &shape2) {
     const BoundingBox bb1 = GetBoundBox(shape1);

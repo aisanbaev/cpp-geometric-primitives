@@ -135,31 +135,21 @@ std::optional<Shape> ParseSingleShape(std::string_view token) {
         return std::nullopt;
 
     std::string_view type = parts[0];
-    std::string param_str;
-    for (auto i : std::views::iota(1u, parts.size())) {
-        if (!param_str.empty())
-            param_str += ' ';
-        param_str += std::string(parts[i]);
-    }
 
-    // Выбираем конструктор по имени
-    auto get_maker =
-        [](std::string_view t) -> std::optional<std::function<std::optional<Shape>(const std::vector<double> &)>> {
-        if (t == "circle")
-            return MakeCircle;
-        if (t == "line")
-            return MakeLine;
-        if (t == "triangle")
-            return MakeTriangle;
-        if (t == "rectangle")
-            return MakeRectangle;
-        if (t == "polygon")
-            return MakePolygon;
+    auto param_view = parts | std::views::drop(1) | std::views::join_with(' ') | std::ranges::to<std::string>();
+
+    static const std::unordered_map<std::string_view, std::function<std::optional<Shape>(const std::vector<double> &)>>
+        makers = {{"circle", MakeCircle},
+                  {"line", MakeLine},
+                  {"triangle", MakeTriangle},
+                  {"rectangle", MakeRectangle},
+                  {"polygon", MakePolygon}};
+
+    auto it = makers.find(type);
+    if (it == makers.end())
         return std::nullopt;
-    };
 
-    // Обратите внимание на код ниже
-    return get_maker(type).and_then([&](auto maker) { return ParseDoubles(param_str).and_then(maker); });
+    return ParseDoubles(param_view).and_then(it->second);
 }
 
 std::vector<Shape> ParseShapes(std::string_view input) {
