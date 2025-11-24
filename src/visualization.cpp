@@ -10,6 +10,7 @@ template <class... Ts>
 struct Multilambda : Ts... {
     using Ts::operator()...;
 };
+
 auto DrawConfig() {
     using namespace geometry;
     using namespace matplot;
@@ -23,6 +24,8 @@ auto DrawConfig() {
     hold(on);     // Multiple plots mode
     axis(equal);  // Squre view
     grid(on);     // Enable grid by default
+    xlim({-6, 15});
+    ylim({-6, 15});
     return f;
 }
 

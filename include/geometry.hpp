@@ -389,3 +389,16 @@ struct std::formatter<geometry::Polygon> {
         return std::format_to(out, "]");
     }
 };
+
+template <>
+struct std::formatter<geometry::Shape> {
+    constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
+
+    template <typename FormatContext>
+    auto format(const geometry::Shape &shape, FormatContext &ctx) const {
+        return std::visit(
+            [&ctx](const auto &s) ->
+            typename FormatContext::iterator { return std::formatter<std::decay_t<decltype(s)>>{}.format(s, ctx); },
+            shape);
+    }
+};
